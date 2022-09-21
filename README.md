@@ -1,2 +1,10 @@
 # java-7-semester
-foo
+```
+cd src
+```
+```
+javac Main.java
+```
+```
+java Main {номер задания}
+```
