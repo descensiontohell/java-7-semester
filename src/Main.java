@@ -39,17 +39,17 @@ public class Main {
         break;
 
       case 8:
-        int[] task8_array = {1,-10,5,6,45,23, 45,-34,0,32,56,-1,2,-2};
+        int[] task8_array = {1, -10, 5, 6, 45, 23, 45, -34, 0, 32, 56, -1, 2, -2};
         new EighthTask(sc, task8_array);
         break;
 
       case 9:
-        int[] task9_array = {15,10,51, 6, 5,3, 10,-34,0,32,56, 12,24, 52};
+        int[] task9_array = {15, 10, 51, 6, 5, 3, 10, -34, 0, 32, 56, 12, 24, 52};
         new NinethTask(sc, task9_array);
         break;
 
       case 10: 
-        int[] task10_array = {15,10,0,-6,-5,3,0,-34,0,32,56,0,24,52};
+        int[] task10_array = {15, 10, 0, -6, -5, 3, 0, -34, 0, 32, 56, 0, 24, 52};
         new TenthTask(sc, task10_array);
         break;
     }
