@@ -1,57 +1,60 @@
-import java.io.IOException;
-import java.util.Scanner;
 
 public class Main {
-  public static void main(String[] args) throws IOException {
-    if (args.length == 0) {
-      throw new IOException("Вы не ввели число");
+    public static void main(String[] args) throws LinkedListIndexOutOfBoundsException {
+
+        // Create a new linked list to experiment with
+        LinkedList newList = new LinkedList(new Node(5));
+
+        // Node that will later be removed by reference
+        Node node_to_be_removed = new Node(11);
+
+        // Add nodes
+        newList.add(new Node(2)); // [1] because LinkedList received the root node upon creation
+        newList.add(new Node(8)); // [2]
+        newList.add(new Node(1)); // [3]
+        newList.add(new Node(3)); // [4]
+        newList.add(node_to_be_removed); // [5]
+        newList.add(new Node(4));  // [6]
+
+        // Print the elements of the result list
+        newList.display(); // 5 2 8 1 3 11 4
+
+        System.out.println(newList.getByIndex(4).getValue()); // 3
+
+        // Remove the second element and print the result list
+        newList.removeByIndex(1);
+        newList.display(); // 5 8 1 3 11 4
+
+        // Remove element with the value of 11 and print the result list
+        newList.removeByReference(node_to_be_removed);
+        newList.display(); // 5 8 1 3 4
+
+        // Clear the list and print the result
+        newList.clear();
+        newList.display(); // Clean
+
+        // Create two boxes
+        Box<Orange> orangeBox = new Box<>();
+        Box<Orange> newOrangeBox = new Box<>();
+
+        // Populate boxes
+        orangeBox.add(new Orange());
+        orangeBox.add(new Orange());
+        orangeBox.add(new Orange());
+        orangeBox.add(new Orange());
+        newOrangeBox.add(new Orange());
+        newOrangeBox.add(new Orange());
+        newOrangeBox.add(new Orange());
+
+        // Check fruits
+        orangeBox.display(); // 4x
+        newOrangeBox.display(); // 3x
+
+        System.out.println(orangeBox.compare(newOrangeBox)); // false
+
+        orangeBox.moveFruitsTo(newOrangeBox);
+
+        orangeBox.display(); // 0x
+        newOrangeBox.display(); // 7x
     }
-    int task_number = Integer.parseInt(args[args.length-1]);
-    Scanner sc = new Scanner(System.in);
-
-    switch (task_number) {
-      case 1:
-        new FirstTask(sc);      
-        break;
-
-      case 2:
-        new SecondTask(sc);
-        break;
-
-      case 3:
-        new ThirdTask(sc);
-        break;
-
-      case 4:
-        new FourthTask(sc);
-        break;
-
-      case 5:
-        new FifthTask(sc);
-        break;
-      
-      case 6:
-        new SixthTask(sc);
-        break;
-
-      case 7:
-        new SeventhTask(sc);
-        break;
-
-      case 8:
-        int[] task8_array = {1, -10, 5, 6, 45, 23, 45, -34, 0, 32, 56, -1, 2, -2};
-        new EighthTask(sc, task8_array);
-        break;
-
-      case 9:
-        int[] task9_array = {15, 10, 51, 6, 5, 3, 10, -34, 0, 32, 56, 12, 24, 52};
-        new NinethTask(sc, task9_array);
-        break;
-
-      case 10: 
-        int[] task10_array = {15, 10, 0, -6, -5, 3, 0, -34, 0, 32, 56, 0, 24, 52};
-        new TenthTask(sc, task10_array);
-        break;
-    }
-  }
 }
