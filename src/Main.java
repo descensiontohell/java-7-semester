@@ -1,60 +1,22 @@
 
 public class Main {
-    public static void main(String[] args) throws LinkedListIndexOutOfBoundsException {
+    public static void main(String[] args) {
+        System.out.println(FirstStringTask.isPalindrome("sus"));  // true
+        System.out.println(FirstStringTask.removeDuplicates("aaaammoguuus"));  // amogus
+        System.out.println(FirstStringTask.isAnagram("amogus", "mosuga"));  // true
+        System.out.println(FirstStringTask.compareLexicographically("amogus", "Mosuga"));  // First is less
+        System.out.println(FirstStringTask.compareLexicographicallyRegardlessRegister("amogus", "Mosuga"));  // First is greater
+        System.out.println(FirstStringTask.concatenateStrings("amo", "gus"));  // amogus
+        System.out.println(FirstStringTask.doesStringEndWith("amogusus", "sus"));  // true
+        System.out.println(FirstStringTask.doesEqual("amogus", "sus"));  // false
+        System.out.println(FirstStringTask.getLength("amogus"));  // 6
 
-        // Create a new linked list to experiment with
-        LinkedList newList = new LinkedList(new Node(5));
-
-        // Node that will later be removed by reference
-        Node node_to_be_removed = new Node(11);
-
-        // Add nodes
-        newList.add(new Node(2)); // [1] because LinkedList received the root node upon creation
-        newList.add(new Node(8)); // [2]
-        newList.add(new Node(1)); // [3]
-        newList.add(new Node(3)); // [4]
-        newList.add(node_to_be_removed); // [5]
-        newList.add(new Node(4));  // [6]
-
-        // Print the elements of the result list
-        newList.display(); // 5 2 8 1 3 11 4
-
-        System.out.println(newList.getByIndex(4).getValue()); // 3
-
-        // Remove the second element and print the result list
-        newList.removeByIndex(1);
-        newList.display(); // 5 8 1 3 11 4
-
-        // Remove element with the value of 11 and print the result list
-        newList.removeByReference(node_to_be_removed);
-        newList.display(); // 5 8 1 3 4
-
-        // Clear the list and print the result
-        newList.clear();
-        newList.display(); // Clean
-
-        // Create two boxes
-        Box<Orange> orangeBox = new Box<>();
-        Box<Orange> newOrangeBox = new Box<>();
-
-        // Populate boxes
-        orangeBox.add(new Orange());
-        orangeBox.add(new Orange());
-        orangeBox.add(new Orange());
-        orangeBox.add(new Orange());
-        newOrangeBox.add(new Orange());
-        newOrangeBox.add(new Orange());
-        newOrangeBox.add(new Orange());
-
-        // Check fruits
-        orangeBox.display(); // 4x
-        newOrangeBox.display(); // 3x
-
-        System.out.println(orangeBox.compare(newOrangeBox)); // false
-
-        orangeBox.moveFruitsTo(newOrangeBox);
-
-        orangeBox.display(); // 0x
-        newOrangeBox.display(); // 7x
+        System.out.println(SecondStringTask.toLowercase("AmOgUs"));  // amogus
+        System.out.println(SecondStringTask.toUppercase("AmOgUs"));  // AMOGUS
+        System.out.println(SecondStringTask.getSecondMostFrequent("aaaammmmmmmoogus"));  // a
+        System.out.println(SecondStringTask.getFirstUniqueCharacter("aammmmooguss"));  // g
+        System.out.println(SecondStringTask.firstLastTwo("asfuisa"));  // true
+        System.out.println(SecondStringTask.getAmountOfCharsThatRepeatThreeTimes("abdfaaflfdd"));  // 3
+        System.out.println(SecondStringTask.sumOfDigitsInString("5fs7ifd3ds04"));  // 19
     }
 }
