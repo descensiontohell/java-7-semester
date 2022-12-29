@@ -1,4 +1,3 @@
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,53 +10,73 @@ public class Main {
         loginpasswords.put("admin", "admin");
         boolean loggedIn = false;
 
-        //Welcome screen
+        // Welcome screen
         System.out.println("Internet Shop");
-        System.out.println("To login into the system write Login. To register enter Register. (Case Sensitive)");
+        System.out.println("type Login to sign in or Register to sign up");
         Scanner in = new Scanner(System.in);
-        String currentCommand = "";
 
-        try {
-            currentCommand = in.nextLine();
-        } catch (NoSuchElementException e) {
-            return;
-        }
+        itemList = setAssortment(itemList);
+        HashMap<Item, Integer> cart = new HashMap<Item, Integer>();
 
-        System.out.println(currentCommand);
+        while (true) {
+            String currentCommand = in.nextLine();
 
-        //Register method, if successful will redirect to login menu.
-        if (currentCommand.equals("Register")) {
-            Object[] registervalues = new Object[2];
-            registervalues = register(loginpasswords, in);
-            loginpasswords = (HashMap<String, String>) registervalues[0];
-            if ((boolean) registervalues[1]) {
-                currentCommand = "Login";
-                loggedIn = true;
+            //Register method, if successful will redirect to login menu.
+            if (!loggedIn && currentCommand.equals("Register")) {
+                Object[] registervalues = new Object[2];
+                registervalues = register(loginpasswords, in);
+                loginpasswords = (HashMap<String, String>) registervalues[0];
+                if ((boolean) registervalues[1]) {
+                    currentCommand = "Login";
+                    loggedIn = true;
+                    break;
+                }
+            }
+
+            //Login method call
+            else if (!loggedIn && currentCommand.equals("Login")) {
+                boolean loginsuccess = login(loginpasswords, in);
+                if (loginsuccess) {
+                    loggedIn = true;
+                    break;
+                }
+            }
+
+
+            else {
+                System.out.println("Enter correct command");
             }
         }
-        //Login method call
-        if (currentCommand.equals("Login")) {
-            boolean loginsuccess = login(loginpasswords, in);
-            if (loginsuccess) {
-                System.out.println("Login successful.");
-                loggedIn = true;
-            } else {
-                main(null);
+
+        boolean doPrint = true;
+
+        // After user logged in
+        while (true) {
+            if (doPrint) {
+                System.out.println();
+                System.out.println("You are now in the shop catalogue.");
+                System.out.println("If you wish to view assortment, type View.");
+                System.out.println("If you wish to view your shopping cart, type Cart.");
+                System.out.println("If you wish to log out, type anything.");
             }
-        } else {
-            System.out.println("Enter correct command");
-        }
-        if (loggedIn) {
-            //Initialise assortment and send the user to the assortment view method.
-            itemList = setAssortment(itemList);
 
-            HashMap<Item, Integer> cart = new HashMap<Item, Integer>();
-            viewAssortmentMain(itemList, cart, in);
-        }
+            String currentCommand = in.nextLine();
+            doPrint = true;
 
-        //Deinitialize and send the user back to the welcome screen if user exits view.
-        in.close();
-        main(null);
+            if (currentCommand.equals("View")) {
+                chooseAssortment(itemList, cart, in);
+            }
+
+            else if (currentCommand.equals("Cart")) {
+                viewCart(itemList, cart, in);
+            }
+            else if (currentCommand.length() > 0){
+                break;
+            }
+            else {
+                doPrint = false;
+            }
+        }
     }
 
     //Register method. Takes the hashmap with login-password couples and the scanner from main.
@@ -142,41 +161,30 @@ public class Main {
         return itemList;
     }
 
-    //Main menu of catalogue
-    public static void viewAssortmentMain(LinkedList<Item> itemList, HashMap<Item, Integer> cart, Scanner in) {
-        System.out.println("You are now in the shop catalogue.");
-        System.out.println("If you wish to view assortment, type View.");
-        System.out.println("If you wish to view your shopping cart, type Cart.");
-        System.out.println("If you wish to log out, type anything.");
-
-        String currentCommand = in.nextLine();
-        if (currentCommand.equals("View")) {
-            chooseAssortment(itemList, cart, in);
-        } else if (currentCommand.equals("Cart")) {
-            viewCart(itemList, cart, in);
-        }
-        main(null);
-    }
-
     public static void chooseAssortment(LinkedList<Item> itemList, HashMap<Item, Integer> cart, Scanner in) {
         Item currentItem;
+
         for (int i = 0; i < itemList.size(); i++) {
             System.out.print("Product number: ");
             System.out.println(i);
             currentItem = itemList.get(i);
             currentItem.printItem();
         }
+
         System.out.print("If you wish to add a product to your cart, input the product number. ");
         System.out.println("Otherwise type anything to exit.");
         String currentCommand = in.nextLine();
         Integer intCommand = 0;
         boolean isNumber = false;
+
         try {
             intCommand = Integer.parseInt(currentCommand);
             isNumber = true;
-        } catch (NumberFormatException ex) {
+        }
+        catch (NumberFormatException ex) {
             isNumber = false;
         }
+
         if (isNumber) {
             if (intCommand < itemList.size() && intCommand >= 0) {
                 currentItem = itemList.get(intCommand);
@@ -192,8 +200,6 @@ public class Main {
                 System.out.println("Product number is incorrect.");
             }
         }
-        viewAssortmentMain(itemList, cart, in);
-
     }
 
     public static void viewCart(LinkedList<Item> itemList, HashMap<Item, Integer> cart, Scanner in) {
@@ -202,6 +208,5 @@ public class Main {
             int amount = cart.get(item);
             System.out.println("Product: " + thingName + ", amount: " + amount);
         }
-        viewAssortmentMain(itemList, cart, in);
     }
 }
