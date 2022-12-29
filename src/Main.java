@@ -1,60 +1,207 @@
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class Main {
-    public static void main(String[] args) throws LinkedListIndexOutOfBoundsException {
+    public static void main(String[] args) { //Initialization of the shop and main menu
+        //Init variables, lists and catalog
+        HashMap<String, String> loginpasswords = new HashMap<String, String>();
+        LinkedList<Item> itemList = new LinkedList<Item>();
+        loginpasswords.put("admin", "admin");
+        boolean loggedIn = false;
 
-        // Create a new linked list to experiment with
-        LinkedList newList = new LinkedList(new Node(5));
+        //Welcome screen
+        System.out.println("Internet Shop");
+        System.out.println("To login into the system write Login. To register enter Register. (Case Sensitive)");
+        Scanner in = new Scanner(System.in);
+        String currentCommand = "";
 
-        // Node that will later be removed by reference
-        Node node_to_be_removed = new Node(11);
+        try {
+            currentCommand = in.nextLine();
+        } catch (NoSuchElementException e) {
+            return;
+        }
 
-        // Add nodes
-        newList.add(new Node(2)); // [1] because LinkedList received the root node upon creation
-        newList.add(new Node(8)); // [2]
-        newList.add(new Node(1)); // [3]
-        newList.add(new Node(3)); // [4]
-        newList.add(node_to_be_removed); // [5]
-        newList.add(new Node(4));  // [6]
+        System.out.println(currentCommand);
 
-        // Print the elements of the result list
-        newList.display(); // 5 2 8 1 3 11 4
+        //Register method, if successful will redirect to login menu.
+        if (currentCommand.equals("Register")) {
+            Object[] registervalues = new Object[2];
+            registervalues = register(loginpasswords, in);
+            loginpasswords = (HashMap<String, String>) registervalues[0];
+            if ((boolean) registervalues[1]) {
+                currentCommand = "Login";
+                loggedIn = true;
+            }
+        }
+        //Login method call
+        if (currentCommand.equals("Login")) {
+            boolean loginsuccess = login(loginpasswords, in);
+            if (loginsuccess) {
+                System.out.println("Login successful.");
+                loggedIn = true;
+            } else {
+                main(null);
+            }
+        } else {
+            System.out.println("Enter correct command");
+        }
+        if (loggedIn) {
+            //Initialise assortment and send the user to the assortment view method.
+            itemList = setAssortment(itemList);
 
-        System.out.println(newList.getByIndex(4).getValue()); // 3
+            HashMap<Item, Integer> cart = new HashMap<Item, Integer>();
+            viewAssortmentMain(itemList, cart, in);
+        }
 
-        // Remove the second element and print the result list
-        newList.removeByIndex(1);
-        newList.display(); // 5 8 1 3 11 4
+        //Deinitialize and send the user back to the welcome screen if user exits view.
+        in.close();
+        main(null);
+    }
 
-        // Remove element with the value of 11 and print the result list
-        newList.removeByReference(node_to_be_removed);
-        newList.display(); // 5 8 1 3 4
+    //Register method. Takes the hashmap with login-password couples and the scanner from main.
+    //Will ask the user to input a login, and if such string does not exist, 
+    //asks to input a password. Then creates a couple login-password in hashmap.
+    //Returns an object array, where 0th is the new loginpasswords hashmap, and
+    //1st is the result of the operation (true/false) aka success/fail.
+    public static Object[] register(HashMap<String, String> loginpasswords, Scanner in) {
+        //User input
+        System.out.println("Registration");
+        System.out.println("Enter login");
+        String login = in.nextLine();
+        boolean registerState = false;
 
-        // Clear the list and print the result
-        newList.clear();
-        newList.display(); // Clean
+        Object[] returnvalues = new Object[2];
 
-        // Create two boxes
-        Box<Orange> orangeBox = new Box<>();
-        Box<Orange> newOrangeBox = new Box<>();
+        if (loginpasswords.containsKey(login)) {
+            //failed to create a user, returns to main method
+            System.out.println("Such login exists");
+            returnvalues[0] = loginpasswords;
+            returnvalues[1] = registerState;
+            return returnvalues;
+        }
+        System.out.println("Enter password");
+        String password = in.nextLine();
 
-        // Populate boxes
-        orangeBox.add(new Orange());
-        orangeBox.add(new Orange());
-        orangeBox.add(new Orange());
-        orangeBox.add(new Orange());
-        newOrangeBox.add(new Orange());
-        newOrangeBox.add(new Orange());
-        newOrangeBox.add(new Orange());
+        //create new user 
+        loginpasswords.put(login, password);
+        registerState = true;
+        returnvalues[0] = loginpasswords;
+        returnvalues[1] = registerState;
+        return returnvalues;
+    }
 
-        // Check fruits
-        orangeBox.display(); // 4x
-        newOrangeBox.display(); // 3x
+    // Login. Takes the hashmap with login-password couples and the scanner from main.
+    // Will ask the user to input a login, and if such string does exist in the loginpassword
+    // hashmap, then ask the password. If it's true, log in the user.
+    // If anything fails asks the user if they want to retry, then calls login method again.
+    // Returns a boolean that is the result of the operation (true/false) aka success/fail.
+    public static boolean login(HashMap<String, String> loginpasswords, Scanner in) {
+        System.out.println("Enter login");
+        String login = in.nextLine();
+        if (loginpasswords.containsKey(login)) {
+            System.out.println("Enter password");
+            String password = in.nextLine();
+            if (loginpasswords.get(login).equals(password)) {
+                System.out.println("Login successful");
+                return true;
+            } else {
+                System.out.println("Password incorrect");
+                System.out.println("Login failed. Would you like to try again? Y/N");
+                String currentCommand = in.nextLine();
+                if (currentCommand.equals("Y")) {
+                    login(loginpasswords, in);
+                } else {
+                    return false;
+                }
 
-        System.out.println(orangeBox.compare(newOrangeBox)); // false
+            }
+        } else {
+            System.out.println("Such user does not exist");
+            System.out.println("Login failed. Would you like to try again? Y/N");
+            String currentCommand = in.nextLine();
+            if (currentCommand.equals("Y")) {
+                login(loginpasswords, in);
+            } else {
+                return false;
+            }
 
-        orangeBox.moveFruitsTo(newOrangeBox);
+        }
+        return false;
 
-        orangeBox.display(); // 0x
-        newOrangeBox.display(); // 7x
+    }
+
+    public static LinkedList<Item> setAssortment(LinkedList<Item> itemList) {
+        Item itemMilk = new Item("Milk", "A dairy product", 5, 4);
+        Item itemBoxes = new Item("Box", "A 1mx1mx1m cardboard box", 6, 10);
+        Item itemCookies = new Item("Cookies box", "A 500g box of cookies", 8, 6);
+        itemList.add(itemMilk);
+        itemList.add(itemBoxes);
+        itemList.add(itemCookies);
+        return itemList;
+    }
+
+    //Main menu of catalogue
+    public static void viewAssortmentMain(LinkedList<Item> itemList, HashMap<Item, Integer> cart, Scanner in) {
+        System.out.println("You are now in the shop catalogue.");
+        System.out.println("If you wish to view assortment, type View.");
+        System.out.println("If you wish to view your shopping cart, type Cart.");
+        System.out.println("If you wish to log out, type anything.");
+
+        String currentCommand = in.nextLine();
+        if (currentCommand.equals("View")) {
+            chooseAssortment(itemList, cart, in);
+        } else if (currentCommand.equals("Cart")) {
+            viewCart(itemList, cart, in);
+        }
+        main(null);
+    }
+
+    public static void chooseAssortment(LinkedList<Item> itemList, HashMap<Item, Integer> cart, Scanner in) {
+        Item currentItem;
+        for (int i = 0; i < itemList.size(); i++) {
+            System.out.print("Product number: ");
+            System.out.println(i);
+            currentItem = itemList.get(i);
+            currentItem.printItem();
+        }
+        System.out.print("If you wish to add a product to your cart, input the product number. ");
+        System.out.println("Otherwise type anything to exit.");
+        String currentCommand = in.nextLine();
+        Integer intCommand = 0;
+        boolean isNumber = false;
+        try {
+            intCommand = Integer.parseInt(currentCommand);
+            isNumber = true;
+        } catch (NumberFormatException ex) {
+            isNumber = false;
+        }
+        if (isNumber) {
+            if (intCommand < itemList.size() && intCommand >= 0) {
+                currentItem = itemList.get(intCommand);
+                System.out.println("Input number of the amount you wish to get.");
+                intCommand = in.nextInt();
+                if (intCommand <= currentItem.numAvailable) {
+                    cart.put(currentItem, intCommand);
+                    System.out.println("The product has been successfully put in the cart.");
+                } else {
+                    System.out.println("The amount you chose is more than available.");
+                }
+            } else {
+                System.out.println("Product number is incorrect.");
+            }
+        }
+        viewAssortmentMain(itemList, cart, in);
+
+    }
+
+    public static void viewCart(LinkedList<Item> itemList, HashMap<Item, Integer> cart, Scanner in) {
+        for (Item item : cart.keySet()) {
+            String thingName = item.name;
+            int amount = cart.get(item);
+            System.out.println("Product: " + thingName + ", amount: " + amount);
+        }
+        viewAssortmentMain(itemList, cart, in);
     }
 }
